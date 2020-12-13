@@ -1,0 +1,113 @@
+<!-- Licensed under a BSD license. See license.html for license -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>That one First Programming Project but Harder</title>
+</head>
+    
+<!-- vertex shader for mesh -->
+<script id="shader-vs" type="x-shader/x-vertex">
+  attribute vec3 aVertexNormal;
+  attribute vec3 aVertexPosition;
+ 
+  uniform mat4 uMVMatrix;
+  uniform mat4 uPMatrix;
+  uniform mat3 uNMatrix;  
+  
+  varying vec3 vPosition;
+  varying vec3 vNormal;
+
+  void main(void) {
+    
+    // Get the vertex position in eye coordinates and send to the fragment shader
+    vec4 vertexPositionEye4 = uMVMatrix * vec4(aVertexPosition, 1.0);
+    vPosition = vertexPositionEye4.xyz / vertexPositionEye4.w;
+    
+    // Transform the normal (n) to eye coordinates and send to the fragment shader
+    vNormal = normalize(uNMatrix * aVertexNormal);
+
+    gl_Position = uPMatrix*uMVMatrix*vec4(aVertexPosition, 1.0);
+  }
+</script>
+<!-- fragment shader for mesh -->
+<script id="shader-fs" type="x-shader/x-fragment">
+  precision mediump float;
+
+  uniform vec3 uLightPosition;
+  uniform vec3 uAmbientLightColor;
+  uniform vec3 uDiffuseLightColor;
+  uniform vec3 uSpecularLightColor;
+
+  uniform vec3 uAmbientMaterialColor;
+  uniform vec3 uDiffuseMaterialColor;
+  uniform vec3 uSpecularMaterialColor;
+  uniform float uShininess;
+  
+  varying vec3 vPosition;
+  varying vec3 vNormal;
+
+  void main(void) {
+        // Calculate the vector (l) to the light source
+        vec3 vectorToLightSource = normalize(uLightPosition - vPosition);
+
+        // Calculate n dot l for diffuse lighting
+        float diffuseLightWeightning = max(dot(vNormal, 
+                                        vectorToLightSource), 0.0);                           
+
+       // Calculate the reflection vector (r) that is needed for specular light
+      vec3 reflectionVector = normalize(reflect(-vectorToLightSource, 
+                                               vNormal));
+
+      // The camera in eye coordinates is located in the origin and is pointing
+      // along the negative z-axis. Calculate viewVector (v) 
+      // in eye coordinates as:
+      // (0.0, 0.0, 0.0) - vPosition
+      vec3 viewVectorEye = -normalize(vPosition);
+
+      float rdotv = max(dot(reflectionVector, viewVectorEye), 0.0);
+
+      float specularLightWeightning = pow(rdotv, uShininess);
+
+        // Sum up all three reflection components
+        gl_FragColor = vec4(((uAmbientLightColor*uAmbientMaterialColor)
+                    + (uDiffuseLightColor*uDiffuseMaterialColor) * diffuseLightWeightning
+                    + ((uSpecularLightColor*uSpecularMaterialColor) * specularLightWeightning)),1.0);
+ }
+</script>
+
+<script src="gl-matrix-min.js"></script>
+<script src="webgl-utils.js"></script>
+<script src="simpleModeling.js"></script>
+<script src="Particle.js"></script>   
+<script src="mp4.js"></script>
+
+<body onload="startup();">
+  <canvas id="myGLCanvas" width="760" height="760"></canvas>
+    <h1>Simple Physics Engine Environment With Simulated Bouncing Balls</h1>
+    <h2>Author: Jaideep Bhat</h2>
+    <br>
+    <form id="input_form">
+      <fieldset>
+        <legend>Operations</legend>
+        <input type="button" name="operations" id="add" value="Add" onclick="addParticles()">&nbsp &nbsp Add
+        Particles <br>
+        <input type="button" name="operations" id="reset" value="Reset" onclick="resetParticles()">&nbsp &nbsp Reset
+        Scene
+      </fieldset>
+        <br>
+      <fieldset>
+        <legend>Parameters</legend>
+        Gravity&nbsp &nbsp
+        <input type="range" name="parameters" id="gravity" max="20" min="-20" step="0.1" value="9.8">
+        Drag&nbsp &nbsp
+        <input type="range" name="parameters" id="drag" max="1" min="0" step="0.01" value="0.9">
+        Bouncing&nbsp &nbsp
+        <input type="range" name="parameters" id="bounce" max="1" min="0" step="0.01" value="0.95">
+      </fieldset>
+      
+    </form>
+</body>
+
+</html>
