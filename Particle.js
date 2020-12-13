@@ -13,7 +13,7 @@ var bouncing = 0.90;
 var tStep = 0.1;
 
 /**
- * Update gravity, drag and bounce factors
+ * Update gravity, drag and bounce factors based on slider input
  */
 function updateParameters() {
   gravity = parseFloat(document.getElementById("gravity").value);
@@ -32,7 +32,7 @@ class Particle {
     glMatrix.vec3.random(this.position);
     glMatrix.vec3.random(this.velocity);
     // Acceleration
-    this.accel = glMatrix.vec3.fromValues(0, -0.1 * grav, 0);
+    this.accel = glMatrix.vec3.fromValues(0, -0.5 * grav, 0);
     // Radius of particle
     this.radius = (0.7 * Math.random() + 2.0) / 30;
     // Color initilization
@@ -45,10 +45,12 @@ class Particle {
    * Update the position using the current velocity and Euler integration
    */
   updatePosition() {
+    // change is increment for position based on velocity and the time step
     var change = glMatrix.vec3.create();
     glMatrix.vec3.scale(change, this.velocity, tStep);
     glMatrix.vec3.add(this.position, this.position, change);
 
+    // Identify bounds and update position/velocity accordingly
     for (var i = 0; i < this.position.length; i++) {
       if (this.position[i] < -1) {
         this.position[i] = -1;
@@ -75,6 +77,6 @@ class Particle {
    * Update the acceleration using the forces of gravity
    */
   updateAcceleration() {
-    this.accel = [0, -0.1 * gravity, 0];
+    this.accel = [0, -0.5 * gravity, 0];
   }
 }

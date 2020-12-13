@@ -7,7 +7,7 @@
 <title>That one First Programming Project but Harder</title>
 </head>
     
-<!-- vertex shader for mesh -->
+<!-- vertex shader -->
 <script id="shader-vs" type="x-shader/x-vertex">
   attribute vec3 aVertexNormal;
   attribute vec3 aVertexPosition;
@@ -31,7 +31,7 @@
     gl_Position = uPMatrix*uMVMatrix*vec4(aVertexPosition, 1.0);
   }
 </script>
-<!-- fragment shader for mesh -->
+<!-- fragment shader -->
 <script id="shader-fs" type="x-shader/x-fragment">
   precision mediump float;
 
@@ -91,9 +91,9 @@
     <form id="input_form">
       <fieldset>
         <legend>Operations</legend>
-        <input type="button" name="operations" id="add" value="Add" onclick="addParticles()">&nbsp &nbsp Add
+        <input type="button" name="operations" id="add" value="Add" onclick="addParticles()">&nbsp Add
         Particles <br>
-        <input type="button" name="operations" id="reset" value="Reset" onclick="resetParticles()">&nbsp &nbsp Reset
+        <input type="button" name="operations" id="reset" value="Reset" onclick="resetParticles()">&nbsp Reset
         Scene
       </fieldset>
         <br>
@@ -104,7 +104,7 @@
         Drag&nbsp &nbsp
         <input type="range" name="parameters" id="drag" max="1" min="0" step="0.01" value="0.9">
         Bouncing&nbsp &nbsp
-        <input type="range" name="parameters" id="bounce" max="1" min="0" step="0.01" value="0.95">
+        <input type="range" name="parameters" id="bounce" max="1" min="0" step="0.01" value="0.90">
       </fieldset>
       
     </form>

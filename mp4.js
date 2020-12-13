@@ -34,7 +34,9 @@ var mvMatrixStack = [];
 // Array to keep track of particles
 var partArr = [];
 
+// Specify Shiny value
 var shiny = 100;
+
 // Light parameters
 
 //light position
@@ -336,6 +338,7 @@ function draw() {
   // Then generate the lookat matrix and initialize the MV matrix to that view
   glMatrix.mat4.lookAt(mvMatrix, eyePt, viewPt, up);
 
+  // loops through partArr to enact draw on each particle
   for (var i = 0; i < partArr.length; i++) {
     var particles = partArr[i];
     mvPushMatrix();
@@ -347,6 +350,7 @@ function draw() {
     G = particles.G;
     B = particles.B;
 
+    //light terms given by global vars
     uploadLightsToShader([lightx,lighty,lightz],[alight,alight,alight],[dlight,dlight,dlight],[slight,slight,slight]);
     uploadMaterialToShader([R,G,B],[R,G,B],[1.0,1.0,1.0],shiny);
     setMatrixUniforms();
@@ -403,6 +407,7 @@ function resetParticles() {
  * Update Particle Paramters
  */
 function updateParticles() {
+    // updates Parameters based on slider values
     updateParameters();
     for (var i = 0; i < partArr.length; i++) {
         partArr[i].updatePosition();
